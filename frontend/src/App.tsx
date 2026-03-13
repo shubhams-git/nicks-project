@@ -1,5 +1,7 @@
 import { Listbox } from '@headlessui/react'
-import { useState, type FormEvent } from 'react'
+import { driver } from 'driver.js'
+import 'driver.js/dist/driver.css'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import axios from 'axios'
 
 import {
@@ -44,6 +46,7 @@ const draftingHints = [
 
 const defaultDraft =
   'I spoke with the team about keeping the forecourt clear during a busy shift. We discussed how vehicles can move unexpectedly near pumps and the Wildbean Cafe entry. I reminded the team to stay alert around customer movement, keep the Comms Board updated, and raise any Check-it alerts early so we can act before the risk builds up.'
+const TOUR_STORAGE_KEY = 'nicks-project-onboarding-tour-v1'
 
 function App() {
   const [focusArea, setFocusArea] = useState<FocusAreaValue>('preventing_forecourt_fires')
@@ -53,6 +56,8 @@ function App() {
   const [errorMessage, setErrorMessage] = useState('')
   const [copyMessage, setCopyMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isCompactTour, setIsCompactTour] = useState(false)
+  const tourRef = useRef<ReturnType<typeof driver> | null>(null)
 
   const selectedFocus =
     focusAreaOptions.find((item) => item.value === focusArea) || focusAreaOptions[0]
@@ -123,6 +128,173 @@ function App() {
     }
   }
 
+  const startTour = (markAsSeen = true) => {
+    tourRef.current?.destroy()
+
+    const compactSteps = [
+      {
+        popover: {
+          title: 'Quick tour',
+          description: 'Pick the focus area, write the draft, then generate the response.',
+          side: 'bottom' as const,
+          align: 'center' as const,
+        },
+      },
+      {
+        element: '[data-tour="focus-area"]',
+        popover: {
+          title: 'Focus area',
+          description: 'Choose the topic that fits this entry.',
+          side: 'bottom' as const,
+          align: 'center' as const,
+        },
+      },
+      {
+        element: '[data-tour="draft"]',
+        popover: {
+          title: 'Draft',
+          description: 'Write what happened, what was discussed, and the action to take.',
+          side: 'top' as const,
+          align: 'center' as const,
+        },
+      },
+      {
+        element: '[data-tour="generate"]',
+        popover: {
+          title: 'Generate',
+          description: 'Create the four final sections.',
+          side: 'top' as const,
+          align: 'center' as const,
+        },
+      },
+      {
+        element: '[data-tour="response"]',
+        popover: {
+          title: 'Review',
+          description: 'Check the response here, then copy it when ready.',
+          side: 'top' as const,
+          align: 'center' as const,
+        },
+      },
+    ]
+
+    const fullSteps = [
+      {
+        popover: {
+          title: 'A quick tour',
+          description:
+            'This takes a few seconds. You only need three things here: choose the focus area, write the draft, and generate the response.',
+          side: 'bottom' as const,
+          align: 'center' as const,
+        },
+      },
+      {
+        element: '[data-tour="focus-area"]',
+        popover: {
+          title: 'Choose the focus area',
+          description:
+            'Start here. Pick the focus area that best matches the situation you are writing about.',
+          side: 'bottom' as const,
+          align: 'start' as const,
+        },
+      },
+      {
+        element: '[data-tour="draft"]',
+        popover: {
+          title: 'Write the draft naturally',
+          description:
+            'Use rough notes if needed. Include what happened, what was discussed, and what actions should come out of it.',
+          side: 'left' as const,
+          align: 'start' as const,
+        },
+      },
+      {
+        element: '[data-tour="generate"]',
+        popover: {
+          title: 'Generate the response',
+          description:
+            'When the draft is ready, generate the final response. The result will be arranged into the four required sections.',
+          side: 'top' as const,
+          align: 'center' as const,
+        },
+      },
+      {
+        element: '[data-tour="response"]',
+        popover: {
+          title: 'Review and copy',
+          description:
+            'The completed response appears here. Review it, then copy the full text when it is ready.',
+          side: 'left' as const,
+          align: 'start' as const,
+        },
+      },
+    ]
+
+    const tour = driver({
+      animate: true,
+      allowClose: true,
+      overlayOpacity: 0.55,
+      overlayColor: '#0f1720',
+      popoverClass: 'app-tour-popover',
+      showProgress: true,
+      progressText: '{{current}} / {{total}}',
+      nextBtnText: 'Next',
+      prevBtnText: 'Back',
+      doneBtnText: isCompactTour ? 'Done' : 'Start writing',
+      smoothScroll: true,
+      stagePadding: isCompactTour ? 6 : 10,
+      stageRadius: isCompactTour ? 14 : 18,
+      onDestroyed: () => {
+        if (markAsSeen) {
+          window.localStorage.setItem(TOUR_STORAGE_KEY, 'seen')
+        }
+
+        tourRef.current = null
+      },
+      steps: isCompactTour ? compactSteps : fullSteps,
+    })
+
+    tourRef.current = tour
+    tour.drive()
+  }
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 430px)')
+    const syncCompactTour = () => {
+      setIsCompactTour(mediaQuery.matches)
+    }
+
+    syncCompactTour()
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', syncCompactTour)
+    } else {
+      mediaQuery.addListener(syncCompactTour)
+    }
+
+    return () => {
+      if (typeof mediaQuery.removeEventListener === 'function') {
+        mediaQuery.removeEventListener('change', syncCompactTour)
+      } else {
+        mediaQuery.removeListener(syncCompactTour)
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    if (window.localStorage.getItem(TOUR_STORAGE_KEY) === 'seen') {
+      return
+    }
+
+    const timer = window.setTimeout(() => {
+      startTour(true)
+    }, 450)
+
+    return () => {
+      window.clearTimeout(timer)
+      tourRef.current?.destroy()
+    }
+  }, [isCompactTour])
+
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(169,205,110,0.18),_transparent_22%),linear-gradient(180deg,_#eef4e7_0%,_#e6ece0_34%,_#dde4dc_100%)] px-3 py-3 text-slate-950 sm:px-4 sm:py-4 lg:px-6 lg:py-6">
       <div className="mx-auto max-w-7xl">
@@ -141,18 +313,27 @@ function App() {
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 self-start sm:grid-cols-4 lg:self-auto">
-              {questionCards.map((question) => (
-                <div
-                  key={question.key}
-                  className="rounded-[1.2rem] border border-slate-900/8 bg-slate-50 px-3 py-3"
-                >
-                  <p className="text-[0.65rem] font-semibold uppercase tracking-[0.26em] text-slate-500">
-                    {question.index}
-                  </p>
-                  <p className="mt-2 text-sm font-semibold text-slate-900">{question.title}</p>
-                </div>
-              ))}
+            <div className="grid gap-2 self-start sm:grid-cols-[auto_1fr] lg:self-auto">
+              <button
+                type="button"
+                className="inline-flex min-h-[2.9rem] items-center justify-center rounded-full border border-slate-900/10 bg-slate-950 px-4 text-sm font-semibold text-white shadow-[0_12px_24px_rgba(15,23,42,0.16)] transition hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-300"
+                onClick={() => startTour(false)}
+              >
+                Quick tour
+              </button>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {questionCards.map((question) => (
+                  <div
+                    key={question.key}
+                    className="rounded-[1.2rem] border border-slate-900/8 bg-slate-50 px-3 py-3"
+                  >
+                    <p className="text-[0.65rem] font-semibold uppercase tracking-[0.26em] text-slate-500">
+                      {question.index}
+                    </p>
+                    <p className="mt-2 text-sm font-semibold text-slate-900">{question.title}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </header>
@@ -177,7 +358,7 @@ function App() {
               </div>
 
               <div className="space-y-4">
-                <div>
+                <div data-tour="focus-area">
                   <span className="mb-2 block text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-slate-300">
                     Focus Area
                   </span>
@@ -259,7 +440,7 @@ function App() {
                   </div>
                 </div>
 
-                <label className="block">
+                <label className="block" data-tour="draft">
                   <span className="mb-2 block text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-slate-300">
                     Draft
                   </span>
@@ -287,6 +468,7 @@ function App() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
+                    data-tour="generate"
                     className="inline-flex min-h-[3.5rem] w-full items-center justify-center rounded-full bg-lime-300 px-6 text-sm font-semibold text-slate-950 shadow-[0_16px_34px_rgba(164,197,89,0.28)] transition hover:bg-lime-200 focus:outline-none focus:ring-4 focus:ring-lime-200/40 disabled:cursor-not-allowed disabled:bg-lime-100 sm:w-auto sm:min-w-56"
                   >
                     {isSubmitting ? 'Generating...' : 'Generate response'}
@@ -301,7 +483,10 @@ function App() {
             </div>
           </form>
 
-          <section className="rounded-[1.8rem] border border-slate-900/8 bg-white p-4 shadow-[0_22px_54px_rgba(16,24,18,0.1)] sm:p-5 lg:rounded-[2rem] lg:p-6">
+          <section
+            className="rounded-[1.8rem] border border-slate-900/8 bg-white p-4 shadow-[0_22px_54px_rgba(16,24,18,0.1)] sm:p-5 lg:rounded-[2rem] lg:p-6"
+            data-tour="response"
+          >
             <div className="flex flex-col gap-4 border-b border-slate-900/8 pb-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
                 <p className="text-[0.68rem] font-semibold uppercase tracking-[0.3em] text-slate-500">

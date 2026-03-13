@@ -34,3 +34,44 @@ textarea,
 select {
   font: inherit;
 }
+
+.app-tour-popover.driver-popover {
+  border-radius: 1.15rem;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 20px 48px rgba(15, 23, 42, 0.18);
+  color: #0f172a;
+}
+
+.app-tour-popover .driver-popover-title {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.app-tour-popover .driver-popover-description {
+  color: #475569;
+  line-height: 1.6;
+}
+
+.app-tour-popover .driver-popover-progress-text {
+  color: #64748b;
+  font-size: 0.8rem;
+}
+
+.app-tour-popover .driver-popover-next-btn,
+.app-tour-popover .driver-popover-prev-btn {
+  border-radius: 999px;
+  border: 0;
+  padding: 0.55rem 0.95rem;
+  text-shadow: none;
+}
+
+.app-tour-popover .driver-popover-next-btn {
+  background: #0f172a;
+  color: #fff;
+}
+
+.app-tour-popover .driver-popover-prev-btn {
+  background: #e2e8f0;
+  color: #0f172a;
+}
