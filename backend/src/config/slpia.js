@@ -52,10 +52,11 @@ export const slpiaQuestions = {
 }
 
 export const protectedTerms = [
-  'Wildbean Cafe',
+  'Wild Bean Cafe',
   'Comms Board',
   'Check-it alerts',
-  'Auror Drive Offs',
+  'Auror',
+  'ESO',
   'Control of Work (CoP)',
 ]
 
