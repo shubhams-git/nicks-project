@@ -47,6 +47,15 @@ const draftingHints = [
 const defaultDraft =
   'I spoke with the team about keeping the forecourt clear during a busy shift. We discussed how vehicles can move unexpectedly near pumps and the Wildbean Cafe entry. I reminded the team to stay alert around customer movement, keep the Comms Board updated, and raise any Check-it alerts early so we can act before the risk builds up.'
 const TOUR_STORAGE_KEY = 'nicks-project-onboarding-tour-v1'
+const refreshTourStep = (_element: Element | undefined, _step: unknown, opts: { driver: ReturnType<typeof driver> }) => {
+  window.requestAnimationFrame(() => {
+    opts.driver.refresh()
+  })
+
+  window.setTimeout(() => {
+    opts.driver.refresh()
+  }, 80)
+}
 
 function App() {
   const [focusArea, setFocusArea] = useState<FocusAreaValue>('preventing_forecourt_fires')
@@ -151,6 +160,7 @@ function App() {
       },
       {
         element: '[data-tour="draft"]',
+        onHighlighted: refreshTourStep,
         popover: {
           title: 'Draft',
           description: 'Write what happened, what was discussed, and the action to take.',
@@ -169,6 +179,7 @@ function App() {
       },
       {
         element: '[data-tour="response"]',
+        onHighlighted: refreshTourStep,
         popover: {
           title: 'Review',
           description: 'Check the response here, then copy it when ready.',
@@ -200,12 +211,13 @@ function App() {
       },
       {
         element: '[data-tour="draft"]',
+        onHighlighted: refreshTourStep,
         popover: {
           title: 'Write the draft naturally',
           description:
             'Use rough notes if needed. Include what happened, what was discussed, and what actions should come out of it.',
-          side: 'left' as const,
-          align: 'start' as const,
+          side: 'top' as const,
+          align: 'center' as const,
         },
       },
       {
@@ -220,11 +232,12 @@ function App() {
       },
       {
         element: '[data-tour="response"]',
+        onHighlighted: refreshTourStep,
         popover: {
           title: 'Review and copy',
           description:
             'The completed response appears here. Review it, then copy the full text when it is ready.',
-          side: 'left' as const,
+          side: 'bottom' as const,
           align: 'start' as const,
         },
       },
@@ -233,7 +246,7 @@ function App() {
     const tour = driver({
       animate: true,
       allowClose: true,
-      overlayOpacity: 0.55,
+      overlayOpacity: isCompactTour ? 0.74 : 0.68,
       overlayColor: '#0f1720',
       popoverClass: 'app-tour-popover',
       showProgress: true,
@@ -241,9 +254,9 @@ function App() {
       nextBtnText: 'Next',
       prevBtnText: 'Back',
       doneBtnText: isCompactTour ? 'Done' : 'Start writing',
-      smoothScroll: true,
-      stagePadding: isCompactTour ? 6 : 10,
-      stageRadius: isCompactTour ? 14 : 18,
+      smoothScroll: false,
+      stagePadding: isCompactTour ? 4 : 6,
+      stageRadius: isCompactTour ? 12 : 14,
       onDestroyed: () => {
         if (markAsSeen) {
           window.localStorage.setItem(TOUR_STORAGE_KEY, 'seen')
@@ -299,8 +312,8 @@ function App() {
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(169,205,110,0.18),_transparent_22%),linear-gradient(180deg,_#eef4e7_0%,_#e6ece0_34%,_#dde4dc_100%)] px-3 py-3 text-slate-950 sm:px-4 sm:py-4 lg:px-6 lg:py-6">
       <div className="mx-auto max-w-7xl">
         <header className="mb-3 rounded-[1.8rem] border border-slate-900/8 bg-white/82 px-4 py-5 shadow-[0_18px_40px_rgba(22,37,17,0.08)] backdrop-blur sm:mb-4 sm:px-6 sm:py-6 lg:rounded-[2rem] lg:px-7">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-            <div className="min-w-0 max-w-3xl">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            <div className="min-w-0 max-w-2xl">
               <p className="text-[0.68rem] font-semibold uppercase tracking-[0.34em] text-slate-500">
                 Weekly Reflection
               </p>
@@ -311,29 +324,28 @@ function App() {
                 Choose the focus area, write the draft naturally, and generate four concise
                 sections that are ready to review and paste.
               </p>
-            </div>
-
-            <div className="grid gap-2 self-start sm:grid-cols-[auto_1fr] lg:self-auto">
               <button
                 type="button"
-                className="inline-flex min-h-[2.9rem] items-center justify-center rounded-full border border-slate-900/10 bg-slate-950 px-4 text-sm font-semibold text-white shadow-[0_12px_24px_rgba(15,23,42,0.16)] transition hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-300"
+                className="mt-4 inline-flex items-center gap-2 rounded-full border border-lime-300 bg-lime-50 px-4 py-1.5 text-[0.75rem] font-semibold text-lime-700 shadow-sm transition hover:border-lime-400 hover:bg-lime-100 hover:text-lime-900 focus:outline-none focus:ring-2 focus:ring-lime-300 focus:ring-offset-2"
                 onClick={() => startTour(false)}
               >
+                <TourCompassIcon />
                 Quick tour
               </button>
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                {questionCards.map((question) => (
-                  <div
-                    key={question.key}
-                    className="rounded-[1.2rem] border border-slate-900/8 bg-slate-50 px-3 py-3"
-                  >
-                    <p className="text-[0.65rem] font-semibold uppercase tracking-[0.26em] text-slate-500">
-                      {question.index}
-                    </p>
-                    <p className="mt-2 text-sm font-semibold text-slate-900">{question.title}</p>
-                  </div>
-                ))}
-              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 self-start sm:grid-cols-4 lg:self-auto">
+              {questionCards.map((question) => (
+                <div
+                  key={question.key}
+                  className="rounded-[1.2rem] border border-slate-900/8 bg-slate-50 px-3 py-3"
+                >
+                  <p className="text-[0.65rem] font-semibold uppercase tracking-[0.26em] text-slate-500">
+                    {question.index}
+                  </p>
+                  <p className="mt-2 text-sm font-semibold text-slate-900">{question.title}</p>
+                </div>
+              ))}
             </div>
           </div>
         </header>
@@ -359,12 +371,12 @@ function App() {
 
               <div className="space-y-4">
                 <div data-tour="focus-area">
-                  <span className="mb-2 block text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-slate-300">
+                  <span className="mb-2.5 block text-[0.68rem] font-semibold uppercase tracking-[0.3em] text-lime-200/60">
                     Focus Area
                   </span>
                   <Listbox value={focusArea} onChange={setFocusArea}>
                     <div className="relative">
-                      <Listbox.Button className="flex w-full items-start justify-between gap-3 rounded-[1.3rem] border border-white/10 bg-white/8 px-4 py-3 text-left text-[0.98rem] text-white outline-none transition focus-visible:border-lime-300/60 focus-visible:bg-white/10 focus-visible:ring-4 focus-visible:ring-lime-300/20">
+                      <Listbox.Button className="flex w-full items-start justify-between gap-3 rounded-[1.15rem] border border-white/12 bg-white/7 px-4 py-3 text-left text-[0.97rem] text-white outline-none transition hover:bg-white/10 focus-visible:border-lime-300/55 focus-visible:bg-white/10 focus-visible:shadow-[0_0_0_3px_rgba(163,228,78,0.14)] focus-visible:ring-0">
                         <span className="min-w-0 flex-1 pr-2 leading-6 whitespace-normal">
                           {selectedFocus.label}
                         </span>
@@ -411,11 +423,11 @@ function App() {
 
                 {focusArea === 'others' ? (
                   <label className="block">
-                    <span className="mb-2 block text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-slate-300">
+                    <span className="mb-2.5 block text-[0.68rem] font-semibold uppercase tracking-[0.3em] text-lime-200/60">
                       Custom Focus Area
                     </span>
                     <input
-                      className="min-h-[3.5rem] w-full rounded-[1.3rem] border border-white/10 bg-white/8 px-4 py-3 text-[0.98rem] text-white outline-none transition placeholder:text-slate-400 focus:border-lime-300/60 focus:bg-white/10 focus:ring-4 focus:ring-lime-300/20"
+                      className="min-h-[3.5rem] w-full rounded-[1.15rem] border border-white/12 bg-white/7 px-4 py-3 text-[0.97rem] text-white outline-none transition placeholder:text-slate-500 focus:border-lime-300/55 focus:bg-white/10 focus:shadow-[0_0_0_3px_rgba(163,228,78,0.14)] focus:ring-0"
                       placeholder="Type the focus area"
                       value={customFocusArea}
                       onChange={(event) => setCustomFocusArea(event.target.value)}
@@ -440,12 +452,13 @@ function App() {
                   </div>
                 </div>
 
-                <label className="block" data-tour="draft">
-                  <span className="mb-2 block text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-slate-300">
+                <label className="block">
+                  <span className="mb-2.5 block text-[0.68rem] font-semibold uppercase tracking-[0.3em] text-lime-200/60">
                     Draft
                   </span>
                   <textarea
-                    className="min-h-[18rem] w-full resize-y rounded-[1.55rem] border border-[#dce6c7] bg-[#f8f6ef] px-4 py-4 text-[1rem] leading-7 text-slate-900 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] outline-none transition placeholder:text-slate-400 focus:border-lime-500 focus:ring-4 focus:ring-lime-300/25 sm:min-h-[22rem] sm:px-5 sm:py-5 lg:min-h-[27rem]"
+                    data-tour="draft"
+                    className="min-h-[18rem] w-full resize-y rounded-[1.2rem] border border-[#b9cca2] bg-[#f5f3eb] px-5 py-4 text-[0.97rem] leading-[1.8] text-slate-800 shadow-[0_1px_3px_rgba(15,23,42,0.06),_inset_0_1.5px_0_rgba(255,255,255,0.9)] outline-none transition placeholder:text-slate-400/60 focus:border-[#7db83e] focus:bg-[#f3f1e7] focus:shadow-[0_0_0_3.5px_rgba(125,184,62,0.18),_0_1px_3px_rgba(15,23,42,0.05)] focus:ring-0 sm:min-h-[22rem] sm:px-5 sm:py-5 lg:min-h-[27rem]"
                     placeholder="Write what happened, what was discussed, and what actions should come out of it."
                     value={draft}
                     onChange={(event) => setDraft(event.target.value)}
@@ -485,9 +498,11 @@ function App() {
 
           <section
             className="rounded-[1.8rem] border border-slate-900/8 bg-white p-4 shadow-[0_22px_54px_rgba(16,24,18,0.1)] sm:p-5 lg:rounded-[2rem] lg:p-6"
-            data-tour="response"
           >
-            <div className="flex flex-col gap-4 border-b border-slate-900/8 pb-4 sm:flex-row sm:items-start sm:justify-between">
+            <div
+              className="flex flex-col gap-4 border-b border-slate-900/8 pb-4 sm:flex-row sm:items-start sm:justify-between"
+              data-tour="response"
+            >
               <div className="min-w-0">
                 <p className="text-[0.68rem] font-semibold uppercase tracking-[0.3em] text-slate-500">
                   Response
@@ -609,6 +624,28 @@ function CopyIcon() {
         stroke="currentColor"
         strokeWidth="1.6"
         strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
+function TourCompassIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="h-3.5 w-3.5"
+      viewBox="0 0 14 14"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.35" />
+      <path
+        d="M9.4 4.6L7.65 7.65L4.6 9.4L6.35 6.35L9.4 4.6Z"
+        stroke="currentColor"
+        strokeWidth="1.15"
+        strokeLinejoin="round"
+        fill="currentColor"
+        fillOpacity="0.2"
       />
     </svg>
   )
