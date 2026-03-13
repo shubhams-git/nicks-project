@@ -9,12 +9,26 @@ import { errorHandler } from './middlewares/errorHandler.js'
 import { apiRouter } from './routes/index.js'
 
 const app = express()
+const normalizeOrigin = (value) => value.replace(/\/+$/, '')
 
-app.use(
-  cors({
-    origin: env.frontendUrl,
-  }),
-)
+const allowedOrigins = env.frontendUrl
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean)
+  .map(normalizeOrigin)
+
+const corsOptions = {
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(normalizeOrigin(origin))) {
+      return callback(null, true)
+    }
+
+    return callback(new Error(`Origin not allowed by CORS: ${origin}`))
+  },
+}
+
+app.use(cors(corsOptions))
+app.options(/.*/, cors(corsOptions))
 app.use(helmet())
 app.use(requestLogger)
 app.use(express.json({ limit: '1mb' }))
