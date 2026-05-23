@@ -26,7 +26,8 @@ Create `.env` from `.env.example`.
 PORT=4000
 FRONTEND_URL=http://localhost:5173
 GEMINI_API_KEY=your_key
-GEMINI_MODEL=gemini-2.5-flash
+GEMINI_MODEL=gemini-3.5-flash
+GEMINI_FALLBACK_MODEL=gemini-3.1-flash-lite
 ```
 
 ## Run Locally
@@ -73,7 +74,7 @@ Response shape:
 {
   "success": true,
   "data": {
-    "model": "gemini-2.5-flash",
+    "model": "gemini-3.5-flash",
     "focusAreaLabel": "Preventing Forecourt Fires",
     "answers": {
       "intent": ["..."],
@@ -105,3 +106,4 @@ src/
 - Environment variables are loaded from `backend/.env`
 - CORS is restricted to `FRONTEND_URL`
 - Gemini responses are validated again with Zod after generation
+- The backend tries `GEMINI_MODEL` first, then `GEMINI_FALLBACK_MODEL` if generation or response validation fails

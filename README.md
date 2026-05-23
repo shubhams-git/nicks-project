@@ -51,7 +51,8 @@ Required backend environment variables:
 PORT=4000
 FRONTEND_URL=http://localhost:5173
 GEMINI_API_KEY=your_key
-GEMINI_MODEL=gemini-2.5-flash
+GEMINI_MODEL=gemini-3.5-flash
+GEMINI_FALLBACK_MODEL=gemini-3.1-flash-lite
 ```
 
 ### 2. Frontend

@@ -17,5 +17,10 @@ export const env = {
   port: Number(process.env.PORT) || 4000,
   frontendUrl: process.env.FRONTEND_URL || 'http://localhost:5173',
   geminiApiKey: process.env.GEMINI_API_KEY || '',
-  geminiModel: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
+  geminiModel: process.env.GEMINI_MODEL || 'gemini-3.5-flash',
+  geminiFallbackModel: process.env.GEMINI_FALLBACK_MODEL || 'gemini-3.1-flash-lite',
 }
+
+env.geminiModels = Array.from(
+  new Set([env.geminiModel, env.geminiFallbackModel].filter(Boolean)),
+)
