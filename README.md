@@ -53,6 +53,8 @@ FRONTEND_URL=http://localhost:5173
 GEMINI_API_KEY=your_key
 GEMINI_MODEL=gemini-3.5-flash
 GEMINI_FALLBACK_MODEL=gemini-3.1-flash-lite
+# Keep false unless intentionally testing a different Gemini model.
+ALLOW_CUSTOM_GEMINI_MODELS=false
 ```
 
 ### 2. Frontend
@@ -77,6 +79,10 @@ VITE_API_BASE_URL=http://localhost:4000/api
 
 Set `VITE_API_BASE_URL` to the deployed backend `/api` URL.
 Set `FRONTEND_URL` to the deployed frontend origin without a trailing path.
+Set the deployed backend Gemini model variables to `GEMINI_MODEL=gemini-3.5-flash` and
+`GEMINI_FALLBACK_MODEL=gemini-3.1-flash-lite`. Remove stale values such as
+`GEMINI_MODEL=gemini-2.5-flash`; the backend will ignore them unless
+`ALLOW_CUSTOM_GEMINI_MODELS=true` is set intentionally.
 
 ## API
 

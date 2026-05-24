@@ -28,6 +28,8 @@ FRONTEND_URL=http://localhost:5173
 GEMINI_API_KEY=your_key
 GEMINI_MODEL=gemini-3.5-flash
 GEMINI_FALLBACK_MODEL=gemini-3.1-flash-lite
+# Keep false unless intentionally testing a different Gemini model.
+ALLOW_CUSTOM_GEMINI_MODELS=false
 ```
 
 ## Run Locally
@@ -107,3 +109,4 @@ src/
 - CORS is restricted to `FRONTEND_URL`
 - Gemini responses are validated again with Zod after generation
 - The backend tries `GEMINI_MODEL` first, then `GEMINI_FALLBACK_MODEL` if generation or response validation fails
+- The configured production models are locked to `gemini-3.5-flash` and `gemini-3.1-flash-lite` by default; stale model env values such as `gemini-2.5-flash` are ignored unless `ALLOW_CUSTOM_GEMINI_MODELS=true` is set deliberately
