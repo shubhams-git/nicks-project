@@ -1,9 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-  color: #1c1917;
-  background-color: #efe6d6;
+  font-family:
+    Inter, "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  color: #e5edf5;
+  background-color: #07090d;
+  color-scheme: dark;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -16,16 +18,20 @@
 
 html {
   scroll-behavior: smooth;
+  background: #07090d;
 }
 
 body {
   margin: 0;
   min-width: 320px;
+  min-height: 100vh;
   line-height: 1.5;
+  background: #07090d;
 }
 
 ::selection {
-  background: rgba(122, 196, 67, 0.22);
+  color: #061014;
+  background: rgba(103, 232, 249, 0.82);
 }
 
 button,
@@ -35,71 +41,109 @@ select {
   font: inherit;
 }
 
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+textarea,
+input {
+  caret-color: #67e8f9;
+}
+
+textarea::-webkit-scrollbar,
+.app-tour-popover ::-webkit-scrollbar {
+  width: 10px;
+}
+
+textarea::-webkit-scrollbar-track,
+.app-tour-popover ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+textarea::-webkit-scrollbar-thumb,
+.app-tour-popover ::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.38);
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+
+textarea::-webkit-scrollbar-thumb:hover,
+.app-tour-popover ::-webkit-scrollbar-thumb:hover {
+  background: rgba(103, 232, 249, 0.56);
+  background-clip: padding-box;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* ============================================================
-   Tour Popover — driver.js complete override
+   Tour Popover - driver.js dark workbench theme
    ============================================================ */
 
 .app-tour-popover.driver-popover {
-  background: #ffffff;
-  border-radius: 1.15rem;
-  border: 1px solid rgba(15, 23, 42, 0.09);
+  background: #0b1117;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(103, 232, 249, 0.2);
   box-shadow:
-    0 0 0 1px rgba(15, 23, 42, 0.03),
-    0 4px 10px rgba(15, 23, 42, 0.06),
-    0 20px 48px rgba(15, 23, 42, 0.17);
-  padding: 1.35rem 1.45rem 1.25rem;
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 24px 70px rgba(0, 0, 0, 0.5),
+    0 0 34px rgba(34, 211, 238, 0.1);
+  padding: 1.15rem 1.2rem 1.05rem;
   max-width: 22rem;
   min-width: 16rem;
-  color: #0f172a;
-  font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  color: #e5edf5;
+  font-family:
+    Inter, "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 }
 
-/* Title */
 .app-tour-popover .driver-popover-title {
   font-size: 1rem;
   font-weight: 700;
-  letter-spacing: -0.025em;
-  color: #0f172a;
+  letter-spacing: -0.015em;
+  color: #ffffff;
   margin-bottom: 0.45rem;
   line-height: 1.3;
-  padding-right: 1.5rem; /* room for close btn */
+  padding-right: 1.5rem;
 }
 
-/* Description */
 .app-tour-popover .driver-popover-description {
   font-size: 0.875rem;
-  color: #475569;
-  line-height: 1.7;
+  color: #94a3b8;
+  line-height: 1.65;
 }
 
-/* Footer */
 .app-tour-popover .driver-popover-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 1.15rem;
+  margin-top: 1.05rem;
   padding-top: 0.85rem;
-  border-top: 1px solid rgba(15, 23, 42, 0.07);
+  border-top: 1px solid rgba(255, 255, 255, 0.09);
   gap: 0.5rem;
 }
 
-/* Progress text */
 .app-tour-popover .driver-popover-progress-text {
-  color: #94a3b8;
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  color: #64748b;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
-/* Nav buttons row */
 .app-tour-popover .driver-popover-navigation-btns {
   display: flex;
   align-items: center;
   gap: 0.4rem;
 }
-
-/* ---- Buttons: force all states to be readable ---- */
 
 .app-tour-popover .driver-popover-next-btn,
 .app-tour-popover .driver-popover-prev-btn,
@@ -114,40 +158,40 @@ select {
 
 .app-tour-popover .driver-popover-next-btn,
 .app-tour-popover .driver-popover-prev-btn {
-  border-radius: 0.65rem;
+  border-radius: 0.5rem;
   border: 0 !important;
-  padding: 0.44rem 0.9rem;
+  padding: 0.48rem 0.88rem;
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: background 0.12s ease, color 0.12s ease, opacity 0.12s ease;
+  transition:
+    background 0.12s ease,
+    color 0.12s ease,
+    opacity 0.12s ease;
   line-height: 1.4;
-  letter-spacing: 0.01em;
 }
 
 .app-tour-popover .driver-popover-next-btn {
-  background: #0f172a !important;
-  color: #ffffff !important;
+  background: #67e8f9 !important;
+  color: #061014 !important;
 }
 
 .app-tour-popover .driver-popover-next-btn:hover {
-  background: #1e3a5f !important;
-  color: #ffffff !important;
+  background: #a5f3fc !important;
+  color: #061014 !important;
   opacity: 1 !important;
 }
 
 .app-tour-popover .driver-popover-prev-btn {
-  background: #f1f5f9 !important;
-  color: #334155 !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #cbd5e1 !important;
 }
 
 .app-tour-popover .driver-popover-prev-btn:hover {
-  background: #e2e8f0 !important;
-  color: #0f172a !important;
+  background: rgba(255, 255, 255, 0.13) !important;
+  color: #ffffff !important;
   opacity: 1 !important;
 }
-
-/* ---- Close button ---- */
 
 .app-tour-popover .driver-popover-close-btn,
 .app-tour-popover .driver-popover-close-btn:hover {
@@ -159,31 +203,33 @@ select {
 }
 
 .app-tour-popover .driver-popover-close-btn {
-  color: #94a3b8 !important;
-  opacity: 0.8;
+  color: #64748b !important;
+  opacity: 0.9;
   cursor: pointer;
-  transition: color 0.12s, opacity 0.12s;
+  transition:
+    color 0.12s,
+    opacity 0.12s;
   font-size: 1.1rem;
   line-height: 1;
 }
 
 .app-tour-popover .driver-popover-close-btn:hover {
-  color: #1e293b !important;
+  color: #ffffff !important;
   opacity: 1;
 }
 
 .driver-active-element {
   box-shadow:
-    0 0 0 3px rgba(163, 228, 78, 0.2),
-    0 16px 36px rgba(15, 23, 42, 0.16) !important;
+    0 0 0 3px rgba(103, 232, 249, 0.22),
+    0 18px 42px rgba(0, 0, 0, 0.34) !important;
 }
 
 @media (max-width: 430px) {
   .app-tour-popover.driver-popover {
     max-width: calc(100vw - 1.5rem);
     min-width: 0;
-    padding: 1.05rem 1rem 0.95rem;
-    border-radius: 1rem;
+    padding: 1rem 0.95rem 0.9rem;
+    border-radius: 0.65rem;
   }
 
   .app-tour-popover .driver-popover-title {
